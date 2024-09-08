@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "custom_assert.h"
 
 state_code_t read_file(const char *filename, char **output) {
     C_ASSERT(filename != NULL, READING_ERROR);
