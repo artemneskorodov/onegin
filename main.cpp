@@ -1,32 +1,40 @@
+#include <strings.h>
 #include "utils.h"
-//TODO add custom assert
-//TODO color print
-//TODO string comparison from start and from and skipping all characters that are not alphabetic
-//TODO sorting (bubble for start, qsort after)
+#include "colors.h"
+#include "handle_flags.h"
+//TODO qsort
 //TODO reading from chosen in argv file
+//TODO sorting with choosing of way with flags (--alphabetic for alphabet sorting and --rhyme for pseudo rhymes)
+//TODO wrighting to console and to file depending on flags
 
-int main(void) {
-    char *input = NULL;
-    if(read_file("Onegin.txt", &input) != READING_SUCCESS) {
-        free(input);
-        printf("Reading from Onegin.txt error\n");
-        return EXIT_FAILURE;
-    }
-
+int main(const int argc, const char *argv[]) {
+    program_mode_t mode = {};
     parsed_text_t text = {};
-    if(parse_strings(input, &text) != PARSING_SUCCESS) {
-        free(text->lines);
-        free(input);
-        printf("Strings parsing error\n");
+
+    if(parse_flags(argc, argv, &mode) != PARSING_FLAGS_SUCCESS) {
+        free_text(&text);
         return EXIT_FAILURE;
     }
 
+    if(try_read_file(&text, &mode) != EXIT_CODE_SUCCESS) {
+        free_text(&text);
+        return EXIT_FAILURE;
+    }
 
-    //TODO sorting with choosing of way with flags (--alphabetic for alphabet sorting and --rhyme for pseudo rhymes)
-    //TODO wrighting to console and to file depending on flags
+    if(try_parse_text(&text) != EXIT_CODE_SUCCESS) {
+        free_text(&text);
+        return EXIT_FAILURE;
+    }
 
+    if(try_sort_text(&text, &mode) != EXIT_CODE_SUCCESS) {
+        free_text(&text);
+        return EXIT_FAILURE;
+    }
 
-    free(text->lines);
-    free(input);
+    if(try_write_output(&text, &mode) != EXIT_CODE_SUCCESS) {
+        free_text(&text);
+        return EXIT_FAILURE;
+    }
+
     return EXIT_SUCCESS;
 }
