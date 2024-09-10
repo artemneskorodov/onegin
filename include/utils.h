@@ -38,5 +38,6 @@ writing_state_t write_file(const char *filename, parsed_text_t *text);
 int string_compare_alphabetic(const void *first, const void *second);
 int string_compare_rhyme(const void *first, const void *second);
 void free_text(parsed_text_t *text);
+size_t rand_index(size_t size);
 
 #endif

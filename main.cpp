@@ -2,10 +2,6 @@
 #include "utils.h"
 #include "colors.h"
 #include "handle_flags.h"
-//TODO qsort
-//TODO reading from chosen in argv file
-//TODO sorting with choosing of way with flags (--alphabetic for alphabet sorting and --rhyme for pseudo rhymes)
-//TODO wrighting to console and to file depending on flags
 
 int main(const int argc, const char *argv[]) {
     program_mode_t mode = {};

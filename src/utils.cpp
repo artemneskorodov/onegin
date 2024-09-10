@@ -135,3 +135,9 @@ int string_compare_rhyme(const void *first, const void *second) {
     }
     return (int)toupper(*pointer_first) - (int)toupper(*pointer_second);
 }
+
+size_t rand_index(size_t size) {
+    static size_t state = 0;
+    state = 214013 * state + 2531011;
+    return state % size;
+}
