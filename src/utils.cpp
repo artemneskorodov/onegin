@@ -78,65 +78,18 @@ writing_state_t write_file(const char *filename, parsed_text_t *text) {
     return WRITING_SUCCESS;
 }
 
-int string_compare_alphabetic(const void *first, const void *second) {
-    C_ASSERT(first  != NULL, 0);
-    C_ASSERT(second != NULL, 0);
-
-    const char *first_string  = *(const char *const *)first ;
-    const char *second_string = *(const char *const *)second;
-
-    for(; *first_string != '\0'; first_string++, second_string++) {
-        while(!isalpha(*first_string ) && *first_string  != '\0')
-            first_string++ ;
-
-        while(!isalpha(*second_string) && *second_string != '\0')
-            second_string++;
-
-        if(toupper(*first_string) != toupper(*second_string))
-            return toupper(*first_string) - toupper(*second_string);
-    }
-    return toupper(*first_string) - toupper(*second_string);
-}
-
 void free_text(parsed_text_t *text) {
+    C_ASSERT(text != NULL, );
+
     free(text->input);
     text->input = NULL;
     free(text->lines);
     text->lines = NULL;
 }
 
-int string_compare_rhyme(const void *first, const void *second) {
-    C_ASSERT(first  != NULL, 0);
-    C_ASSERT(second != NULL, 0);
-
-    const char *first_string  = *(const char *const *)first ;
-    const char *second_string = *(const char *const *)second;
-
-    const char *pointer_first = first_string, *pointer_second = second_string;
-
-    while(*pointer_first != '\0')
-        pointer_first++;
-
-    while(*pointer_second != '\0')
-        pointer_second++;
-
-    for(; pointer_first != first_string; pointer_first--, pointer_second--) {
-        while(!isalpha(*pointer_first) && pointer_first != first_string)
-            pointer_first--;
-
-        while(!isalpha(*pointer_second) && pointer_second != second_string)
-            pointer_second--;
-
-        if(pointer_second == second_string)
-            break;
-
-        if(toupper(*pointer_first) != toupper(*pointer_second))
-            return (int)toupper(*pointer_first) - (int)toupper(*pointer_second);
-    }
-    return (int)toupper(*pointer_first) - (int)toupper(*pointer_second);
-}
-
 size_t rand_index(size_t size) {
+    C_ASSERT(size != 0, 0);
+
     static size_t state = 0;
     state = 214013 * state + 2531011;
     return state % size;

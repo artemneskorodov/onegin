@@ -21,7 +21,7 @@ enum exit_code_t {
 
 parsing_flags_state_t parse_flags(const int argc, const char *argv[], program_mode_t *mode);
 exit_code_t try_read_file(parsed_text_t *text, program_mode_t *mode);
-exit_code_t try_parse_text(parsed_text_t *text);
+exit_code_t try_parse_text(parsed_text_t *text, program_mode_t *);
 exit_code_t try_sort_text(parsed_text_t *text, program_mode_t *mode);
 exit_code_t try_write_output(parsed_text_t *text, program_mode_t *mode);
 

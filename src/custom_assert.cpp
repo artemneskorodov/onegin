@@ -6,5 +6,6 @@ void print_assert_error(const char *expression, int line_number, const char *fil
     color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                  "-<<CUSTOM ASSERT>>-\n"
                  "Caught error on line %d of file \"%s\"\n"
-                 "Expression: %s\n", line_number, filename, expression);
+                 "Expression: %s\n",
+                 line_number, filename, expression);
 }
