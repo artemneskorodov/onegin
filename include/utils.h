@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "onegin.h"
 
 enum reading_state_t {
@@ -16,7 +17,6 @@ enum parsing_state_t {
     UNKNOWN_PARSING_ERROR,
     PARSING_SUCCESS,
     PARSING_ALLOCATION_ERROR,
-    PARSING_BEFORE_READING_INPUT
 };
 
 enum writing_state_t {
@@ -28,7 +28,8 @@ enum writing_state_t {
 
 reading_state_t read_file(onegin_text_t *text);
 parsing_state_t parse_lines(onegin_text_t *text);
-writing_state_t write_file(const char *filename, char **text, size_t lines_number);
+writing_state_t write_file(const char *filename, onegin_text_t *text);
 size_t rand_index(size_t size);
+bool is_line_end(char symbol);
 
 #endif

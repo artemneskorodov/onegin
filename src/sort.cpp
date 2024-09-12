@@ -25,7 +25,7 @@ void change(void *first, void *second, size_t element_size) {
 }
 
 sorting_state_t sort_array(void *base, size_t element_size, size_t elements_number,
-                           int (*compare_function)(const void *, const void *)) {
+                           int (*compare_function)(const void *, const void *)     ) {
     C_ASSERT(base             != NULL, SORTING_ERROR);
     C_ASSERT(compare_function != NULL, SORTING_ERROR);
 

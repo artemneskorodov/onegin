@@ -4,6 +4,7 @@
 
 static size_t file_size(FILE *file);
 static int file_put_line(FILE *file, char *string);
+static void add_line_end(char *text);
 
 reading_state_t read_file(onegin_text_t *text) {
     C_ASSERT(text           != NULL, UNKNOWN_READING_ERROR);
@@ -14,7 +15,11 @@ reading_state_t read_file(onegin_text_t *text) {
         return READING_NO_SUCH_FILE;
 
     size_t size = file_size(input);
-    text->input_text = (char *)calloc(size + sizeof(char), sizeof(char));
+    if(size == 0) {
+        fclose(input);
+        return UNKNOWN_READING_ERROR;
+    }
+    text->input_text = (char *)calloc(size + sizeof(char) * 3, sizeof(char));
     if(text->input_text == NULL) {
         fclose(input);
         return READING_ALLOCATION_ERROR;
@@ -25,6 +30,9 @@ reading_state_t read_file(onegin_text_t *text) {
         free(text->input_text);
         return UNKNOWN_READING_ERROR;
     }
+
+    add_line_end(text->input_text);
+
     fclose(input);
     return READING_SUCCESS;
 }
@@ -39,10 +47,8 @@ size_t file_size(FILE *file) {
 }
 
 parsing_state_t parse_lines(onegin_text_t *text) {
-    C_ASSERT(text != NULL, UNKNOWN_PARSING_ERROR);
-
-    if(text->input_text == NULL)
-        return PARSING_BEFORE_READING_INPUT;
+    C_ASSERT(text             != NULL, UNKNOWN_PARSING_ERROR);
+    C_ASSERT(text->input_text != NULL, UNKNOWN_PARSING_ERROR);
 
     for(const char *pointer = text->input_text; *pointer != '\0'; pointer++)
         if(*pointer == '\n')
@@ -63,22 +69,23 @@ parsing_state_t parse_lines(onegin_text_t *text) {
     return PARSING_SUCCESS;
 }
 
-writing_state_t write_file(const char *filename, char **lines, size_t lines_number) {
+writing_state_t write_file(const char *filename, onegin_text_t *text) {
     C_ASSERT(filename != NULL, UNKNOWN_WRITING_ERROR);
-    C_ASSERT(lines     != NULL, UNKNOWN_WRITING_ERROR);
+    C_ASSERT(text     != NULL, UNKNOWN_WRITING_ERROR);
 
-    FILE *output = fopen(filename, "w");
+    FILE *output = fopen(filename, "wb");
     if(output == NULL)
         return WRITING_OPEN_FILE_ERROR;
 
-    for(size_t line = 0; line < lines_number; line++) {
-        if(lines[line][0] != '\0' && lines[line][0] != '\r' && lines[line][0] != '\n') {
-            if(file_put_line(output, lines[line]) == EOF) {
+    for(size_t line = 0; line < text->lines_number; line++) {
+        if(!is_line_end(text->lines[line][0])) {
+            if(file_put_line(output, text->lines[line]) == EOF) {
                 fclose(output);
                 return WRITING_APPENDING_ERROR;
             }
         }
     }
+    fclose(output);
     return WRITING_SUCCESS;
 }
 
@@ -97,7 +104,7 @@ int file_put_line(FILE *file, char *string) {
     char last_symbol = 0;
 
     char *pointer = string;
-    while(*pointer != '\r' && *pointer != '\n' && *pointer != '\0') {
+    while(!is_line_end(*pointer)) {
         pointer++;
         last_symbol = *pointer;
     }
@@ -109,4 +116,22 @@ int file_put_line(FILE *file, char *string) {
         return EOF;
     *pointer = last_symbol;
     return fputs_result;
+}
+
+bool is_line_end(char symbol) {
+    if(symbol == '\r' || symbol == '\n' || symbol == '\0')
+        return true;
+
+    return false;
+}
+
+void add_line_end(char *text) {
+    while(*text != '\0')
+        text++;
+
+    if(!is_line_end(*(text - 1))) {
+        *(text++) = '\r';
+        *(text++) = '\n';
+        *(text  ) = '\0';
+    }
 }
