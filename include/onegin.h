@@ -20,6 +20,7 @@ exit_code_t try_parse_text(onegin_text_t *text);
 exit_code_t try_sort_alphabetic(onegin_text_t *text);
 exit_code_t try_sort_rhyme(onegin_text_t *text);
 exit_code_t try_print_original(onegin_text_t *text);
+void clean_onegin(void);
 void free_text(onegin_text_t *text);
 
 #endif

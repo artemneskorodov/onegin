@@ -7,6 +7,10 @@
 #include "strings_compare.h"
 #include "utils.h"
 
+const char *ORIGINAL_OUTPUT   = "OneginOriginal.txt"  ;
+const char *ALPHABETIC_OUTPUT = "OneginAlphabetic.txt";
+const char *RHYME_OUTPUT      = "OneginRhyme.txt"     ;
+
 void free_text(onegin_text_t *text) {
     C_ASSERT(text != NULL, );
 
@@ -92,7 +96,6 @@ exit_code_t try_sort_alphabetic(onegin_text_t *text) {
         return EXIT_CODE_FAILURE;
     }
 
-    const char *ALPHABETIC_OUTPUT = "OneginAlphabetic.txt";
     if(write_file(ALPHABETIC_OUTPUT, text) != WRITING_SUCCESS) {
         free_text(text);
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
@@ -115,7 +118,6 @@ exit_code_t try_sort_rhyme(onegin_text_t *text) {
         return EXIT_CODE_FAILURE;
     }
 
-    const char *RHYME_OUTPUT = "OneginRhyme.txt";
     if(write_file(RHYME_OUTPUT, text) != WRITING_SUCCESS) {
         free_text(text);
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
@@ -131,7 +133,6 @@ exit_code_t try_sort_rhyme(onegin_text_t *text) {
 exit_code_t try_print_original(onegin_text_t *text) {
     C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
 
-    const char *ORIGINAL_OUTPUT = "OneginOriginal.txt";
     FILE *output = fopen(ORIGINAL_OUTPUT, "wb");
     if(output == NULL) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
@@ -153,4 +154,16 @@ exit_code_t try_print_original(onegin_text_t *text) {
                  "Successfully written original text to file '%s'.\n",
                  ORIGINAL_OUTPUT);
     return EXIT_CODE_SUCCESS;
+}
+
+void clean_onegin(void) {
+    if(remove(ALPHABETIC_OUTPUT) == 0)
+        color_printf(YELLOW_TEXT, true, DEFAULT_BACKGROUND,
+                     "Removed '%s'.\n", ALPHABETIC_OUTPUT);
+    if(remove(RHYME_OUTPUT     ) == 0)
+        color_printf(YELLOW_TEXT, true, DEFAULT_BACKGROUND,
+                     "Removed '%s'.\n", RHYME_OUTPUT     );
+    if(remove(ORIGINAL_OUTPUT  ) == 0)
+        color_printf(YELLOW_TEXT, true, DEFAULT_BACKGROUND,
+                     "Removed '%s'.\n", ORIGINAL_OUTPUT  );
 }

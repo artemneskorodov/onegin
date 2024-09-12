@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <strings.h>
 #include "colors.h"
 #include "onegin.h"
 
@@ -10,8 +11,13 @@ int main(const int argc, const char *argv[]) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND, "Unexpected parameter '%s'.\n", argv[2]);
         return EXIT_FAILURE;
     }
-    if(argc == 2)
+    if(argc == 2) {
+        if(strcmp(argv[1], "clean") == 0) {
+            clean_onegin();
+            return EXIT_SUCCESS;
+        }
         text.filename = argv[1];
+    }
 
     if(      try_read_file(&text) != EXIT_CODE_SUCCESS)
         return EXIT_FAILURE;
