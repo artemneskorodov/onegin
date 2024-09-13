@@ -6,9 +6,10 @@ static size_t file_size(FILE *file);
 static int file_put_line(FILE *file, char *string);
 static void add_line_end(char *text);
 
-reading_state_t read_file(onegin_text_t *text) {
-    C_ASSERT(text           != NULL, UNKNOWN_READING_ERROR);
-    C_ASSERT(text->filename != NULL, UNKNOWN_READING_ERROR);
+reading_state_t read_file(text_t *text) {
+    C_ASSERT(text             != NULL, UNKNOWN_READING_ERROR);
+    C_ASSERT(text->filename   != NULL, UNKNOWN_READING_ERROR);
+    C_ASSERT(text->input_text == NULL, UNKNOWN_READING_ERROR);
 
     FILE *input = fopen(text->filename, "rb");
     if(input == NULL)
@@ -46,12 +47,13 @@ size_t file_size(FILE *file) {
     return size;
 }
 
-parsing_state_t parse_lines(onegin_text_t *text) {
+parsing_state_t parse_lines(text_t *text) {
     C_ASSERT(text             != NULL, UNKNOWN_PARSING_ERROR);
     C_ASSERT(text->input_text != NULL, UNKNOWN_PARSING_ERROR);
+    C_ASSERT(text->lines      == NULL, UNKNOWN_PARSING_ERROR);
 
-    for(const char *pointer = text->input_text; *pointer != '\0'; pointer++)
-        if(*pointer == '\n')
+    for(const char *buffer_pointer = text->input_text; *buffer_pointer != '\0'; buffer_pointer++)
+        if(*buffer_pointer == '\n')
             text->lines_number++;
 
     text->lines = (char **)calloc(text->lines_number + 1, sizeof(char *));
@@ -60,16 +62,16 @@ parsing_state_t parse_lines(onegin_text_t *text) {
 
     text->lines[0] = text->input_text;
     size_t line = 1;
-    for(char *pointer = text->input_text; *pointer != '\0'; pointer++) {
-        if(*pointer == '\n') {
+    for(char *buffer_pointer = text->input_text; *buffer_pointer != '\0'; buffer_pointer++) {
+        if(*buffer_pointer == '\n') {
             C_ASSERT(line < text->lines_number + 1, UNKNOWN_PARSING_ERROR);
-            text->lines[line++] = pointer + 1;
+            text->lines[line++] = buffer_pointer + 1;
         }
     }
     return PARSING_SUCCESS;
 }
 
-writing_state_t write_file(const char *filename, onegin_text_t *text) {
+writing_state_t write_file(const char *filename, text_t *text) {
     C_ASSERT(filename != NULL, UNKNOWN_WRITING_ERROR);
     C_ASSERT(text     != NULL, UNKNOWN_WRITING_ERROR);
 
@@ -78,11 +80,12 @@ writing_state_t write_file(const char *filename, onegin_text_t *text) {
         return WRITING_OPEN_FILE_ERROR;
 
     for(size_t line = 0; line < text->lines_number; line++) {
-        if(!is_line_end(text->lines[line][0])) {
-            if(file_put_line(output, text->lines[line]) == EOF) {
-                fclose(output);
-                return WRITING_APPENDING_ERROR;
-            }
+        if(is_line_end(text->lines[line][0]))
+            continue;
+
+        if(file_put_line(output, text->lines[line]) == EOF) {
+            fclose(output);
+            return WRITING_APPENDING_ERROR;
         }
     }
     fclose(output);
@@ -103,18 +106,18 @@ int file_put_line(FILE *file, char *string) {
 
     char last_symbol = 0;
 
-    char *pointer = string;
-    while(!is_line_end(*pointer)) {
-        pointer++;
-        last_symbol = *pointer;
+    char *buffer_pointer = string;
+    while(!is_line_end(*buffer_pointer)) {
+        buffer_pointer++;
+        last_symbol = *buffer_pointer;
     }
-    *pointer = '\0';
+    *buffer_pointer = '\0';
     int fputs_result = fputs(string, file);
     if(fputs_result == EOF)
         return EOF;
     if(fputc('\n', file) == EOF)
         return EOF;
-    *pointer = last_symbol;
+    *buffer_pointer = last_symbol;
     return fputs_result;
 }
 
@@ -126,6 +129,8 @@ bool is_line_end(char symbol) {
 }
 
 void add_line_end(char *text) {
+    C_ASSERT(text != NULL, );
+
     while(*text != '\0')
         text++;
 

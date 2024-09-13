@@ -4,13 +4,13 @@
 #include "custom_assert.h"
 
 //text colors
-static const char *red_code    = "31";
-static const char *green_code  = "32";
-static const char *yellow_code = "33";
-static const char *blue_code   = "34";
-static const char *purple_code = "35";
-static const char *cyan_code   = "36";
-static const char *white_code  = "37";
+static const char *red_text     = "31";
+static const char *green_text   = "32";
+static const char *yellow_text  = "33";
+static const char *blue_text    = "34";
+static const char *magenta_text = "35";
+static const char *cyan_text    = "36";
+static const char *white_text   = "37";
 
 //background colors
 static const char *black_background  = "40";
@@ -59,7 +59,9 @@ void print_color_code(color_t color, bool is_bold, background_t background) {
         }
     }
     if(color != DEFAULT_TEXT) {
-        printf("%s", color_code(color));
+        const char *code = color_code(color);
+        C_ASSERT(code != NULL, );
+        printf("%s", code);
         if(background != DEFAULT_BACKGROUND)
             putchar(';');
         else {
@@ -68,7 +70,9 @@ void print_color_code(color_t color, bool is_bold, background_t background) {
         }
     }
     if(background != DEFAULT_BACKGROUND) {
-        printf("%sm", background_code(background));
+        const char *code = background_code(background);
+        C_ASSERT(code != NULL, );
+        printf("%sm", code);
         return ;
     }
     reset_color();
@@ -80,20 +84,20 @@ void reset_color(void){
 
 const char *color_code(color_t color) {
     switch(color) {
-        case RED_TEXT:
-            return red_code;
-        case GREEN_TEXT:
-            return green_code;
-        case YELLOW_TEXT:
-            return yellow_code;
-        case BLUE_TEXT:
-            return blue_code;
-        case PURPLE_TEXT:
-            return purple_code;
-        case CYAN_TEXT:
-            return cyan_code;
-        case WHITE_TEXT:
-            return white_code;
+        case     RED_TEXT:
+            return     red_text;
+        case   GREEN_TEXT:
+            return   green_text;
+        case  YELLOW_TEXT:
+            return  yellow_text;
+        case    BLUE_TEXT:
+            return    blue_text;
+        case MAGENTA_TEXT:
+            return magenta_text;
+        case    CYAN_TEXT:
+            return    cyan_text;
+        case   WHITE_TEXT:
+            return   white_text;
         case DEFAULT_TEXT:
             return NULL;
         default:
@@ -103,22 +107,22 @@ const char *color_code(color_t color) {
 
 const char *background_code(background_t background) {
     switch(background) {
-        case BLACK_BACKGROUND:
-            return black_background;
-        case RED_BACKGROUND:
-            return red_background;
-        case GREEN_BACKGROUND:
-            return green_background;
-        case YELLOW_BACKGROUND:
+        case   BLACK_BACKGROUND:
+            return  black_background;
+        case     RED_BACKGROUND:
+            return    red_background;
+        case   GREEN_BACKGROUND:
+            return  green_background;
+        case  YELLOW_BACKGROUND:
             return yellow_background;
-        case BLUE_BACKGROUND:
-            return blue_background;
-        case PURPLE_BACKGROUND:
+        case    BLUE_BACKGROUND:
+            return   blue_background;
+        case  PURPLE_BACKGROUND:
             return purple_background;
-        case CYAN_BACKGROUND:
-            return cyan_background;
-        case WHITE_BACKGROUND:
-            return white_background;
+        case    CYAN_BACKGROUND:
+            return   cyan_background;
+        case   WHITE_BACKGROUND:
+            return  white_background;
         case DEFAULT_BACKGROUND:
             return NULL;
         default:

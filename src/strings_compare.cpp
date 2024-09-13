@@ -19,8 +19,9 @@ int string_compare_alphabetic(const void *first, const void *second) {
         while(!isalpha(*second_string) && !is_line_end(*second_string))
             second_string++;
 
-        if(toupper(*first_string) != toupper(*second_string))
-            return toupper(*first_string) - toupper(*second_string);
+        int difference = toupper(*first_string) - toupper(*second_string);
+        if(difference)
+            return difference;
     }
     return toupper(*first_string) - toupper(*second_string);
 }
@@ -50,8 +51,9 @@ int string_compare_rhyme(const void *first, const void *second) {
         if(pointer_second == second_string)
             break;
 
-        if(toupper(*pointer_first) != toupper(*pointer_second))
-            return toupper(*pointer_first) - toupper(*pointer_second);
+        int difference = toupper(*pointer_first) - toupper(*pointer_second);
+        if(difference)
+            return difference;
     }
     return toupper(*pointer_first) - toupper(*pointer_second);
 }
