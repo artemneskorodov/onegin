@@ -5,7 +5,7 @@
 
 enum exit_code_t {
     EXIT_CODE_SUCCESS,
-    EXIT_CODE_FAILURE
+    EXIT_CODE_FAILURE,
 };
 
 enum parsing_input_exit_code_t {
@@ -15,10 +15,11 @@ enum parsing_input_exit_code_t {
 };
 
 struct text_t {
-    const char *filename;
-    char *      input_text;
-    char **     lines;
+    const char *filename    ;
+    char *      input_text  ;
+    char **     lines       ;
     size_t      lines_number;
+    size_t      input_length;
 };
 
 exit_code_t try_read_file      (text_t *text);

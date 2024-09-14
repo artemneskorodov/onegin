@@ -135,8 +135,7 @@ exit_code_t try_print_original(text_t *text) {
         return EXIT_CODE_SUCCESS;
     }
 
-    size_t text_length = strlen(text->input_text);
-    if(fwrite(text->input_text, sizeof(char), text_length, output) != text_length) {
+    if(fwrite(text->input_text, 1, text->input_length, output) != text->input_length) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while writing original text to file '%s'.\n",
                      ORIGINAL_OUTPUT);

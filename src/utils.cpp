@@ -15,18 +15,18 @@ reading_state_t read_file(text_t *text) {
     if(input == NULL)
         return READING_NO_SUCH_FILE;
 
-    size_t size = file_size(input);
-    if(size == 0) {
+    text->input_length = file_size(input);
+    if(text->input_length == 0) {
         fclose(input);
         return UNKNOWN_READING_ERROR;
     }
-    text->input_text = (char *)calloc(size + sizeof(char) * 3, sizeof(char));
+    text->input_text = (char *)calloc(text->input_length + 3, 1);
     if(text->input_text == NULL) {
         fclose(input);
         return READING_ALLOCATION_ERROR;
     }
 
-    if(fread(text->input_text, sizeof(char), size, input) != size) {
+    if(fread(text->input_text, 1, text->input_length, input) != text->input_length) {
         fclose(input);
         free(text->input_text);
         return UNKNOWN_READING_ERROR;
@@ -80,9 +80,6 @@ writing_state_t write_file(const char *filename, text_t *text) {
         return WRITING_OPEN_FILE_ERROR;
 
     for(size_t line = 0; line < text->lines_number; line++) {
-        if(is_line_end(text->lines[line][0]))
-            continue;
-
         if(file_put_line(output, text->lines[line]) == EOF) {
             fclose(output);
             return WRITING_APPENDING_ERROR;

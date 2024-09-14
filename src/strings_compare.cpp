@@ -52,7 +52,7 @@ int string_compare_rhyme(const void *first, const void *second) {
             break;
 
         int difference = toupper(*pointer_first) - toupper(*pointer_second);
-        if(difference)
+        if(difference != 0)
             return difference;
     }
     return toupper(*pointer_first) - toupper(*pointer_second);
