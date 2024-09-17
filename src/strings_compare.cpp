@@ -12,15 +12,15 @@ int string_compare_alphabetic(const void *first, const void *second) {
     const char *first_string  = *(const char *const *)first ;
     const char *second_string = *(const char *const *)second;
 
-    for(; !is_line_end(*first_string); first_string++, second_string++) {
-        while(!isalpha(*first_string ) && !is_line_end(*first_string))
+    for( ; !is_line_end(*first_string); first_string++, second_string++) {
+        while(!isalpha(*first_string ) && !is_line_end(*first_string ))
             first_string++ ;
 
         while(!isalpha(*second_string) && !is_line_end(*second_string))
             second_string++;
 
         int difference = toupper(*first_string) - toupper(*second_string);
-        if(difference)
+        if(difference != 0)
             return difference;
     }
     return toupper(*first_string) - toupper(*second_string);
@@ -41,7 +41,7 @@ int string_compare_rhyme(const void *first, const void *second) {
     while(!is_line_end(*pointer_second))
         pointer_second++;
 
-    for(; pointer_first != first_string; pointer_first--, pointer_second--) {
+    for( ; pointer_first != first_string; pointer_first--, pointer_second--) {
         while(!isalpha(*pointer_first) && pointer_first != first_string)
             pointer_first--;
 

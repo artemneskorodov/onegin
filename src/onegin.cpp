@@ -18,8 +18,8 @@ static bool clean_if_needed(const char *param);
 void free_text(text_t *text) {
     C_ASSERT(text != NULL, );
 
-    free(text->input_text);
-    free(text->lines     );
+    free(text->input_text );
+    free(text->lines      );
     text->input_text = NULL;
     text->lines      = NULL;
 }
@@ -87,7 +87,8 @@ exit_code_t try_parse_text(text_t *text) {
 exit_code_t try_sort_alphabetic(text_t *text) {
     C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
 
-    if(sort_array(text->lines, sizeof(char *), text->lines_number, string_compare_alphabetic) != SORTING_SUCCESS) {
+    if(sort_array(text->lines, sizeof(char *), text->lines_number,
+                  string_compare_alphabetic) != SORTING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while sorting alphabetic.\n");
         return EXIT_CODE_FAILURE;
@@ -107,7 +108,8 @@ exit_code_t try_sort_alphabetic(text_t *text) {
 exit_code_t try_sort_rhyme(text_t *text) {
     C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
 
-    if(sort_array(text->lines, sizeof(char *), text->lines_number, string_compare_rhyme) != SORTING_SUCCESS) {
+    if(sort_array(text->lines, sizeof(char *), text->lines_number,
+                  string_compare_rhyme) != SORTING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while sorting from end.\n");
         return EXIT_CODE_FAILURE;
@@ -120,7 +122,7 @@ exit_code_t try_sort_rhyme(text_t *text) {
     }
 
     color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
-                 "Successfully sorted from end\n");
+                 "Successfully sorted from end.\n");
     return EXIT_CODE_SUCCESS;
 }
 
@@ -149,9 +151,10 @@ exit_code_t try_print_original(text_t *text) {
 }
 
 bool clean_if_needed(const char *param) {
+    C_ASSERT(param != NULL, false);
+
     if(strcmp(param, "--clean") != 0)
         return false;
-
     if(remove(ALPHABETIC_OUTPUT) == 0)
         color_printf(YELLOW_TEXT, true, DEFAULT_BACKGROUND,
                      "Deleted '%s'.\n", ALPHABETIC_OUTPUT);

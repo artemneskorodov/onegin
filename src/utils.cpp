@@ -72,8 +72,9 @@ parsing_state_t parse_lines(text_t *text) {
 }
 
 writing_state_t write_file(const char *filename, text_t *text) {
-    C_ASSERT(filename != NULL, UNKNOWN_WRITING_ERROR);
-    C_ASSERT(text     != NULL, UNKNOWN_WRITING_ERROR);
+    C_ASSERT(filename    != NULL, UNKNOWN_WRITING_ERROR);
+    C_ASSERT(text        != NULL, UNKNOWN_WRITING_ERROR);
+    C_ASSERT(text->lines != NULL, UNKNOWN_WRITING_ERROR);
 
     FILE *output = fopen(filename, "wb");
     if(output == NULL)
@@ -112,8 +113,10 @@ int file_put_line(FILE *file, char *string) {
     int fputs_result = fputs(string, file);
     if(fputs_result == EOF)
         return EOF;
+
     if(fputc('\n', file) == EOF)
         return EOF;
+
     *buffer_pointer = last_symbol;
     return fputs_result;
 }

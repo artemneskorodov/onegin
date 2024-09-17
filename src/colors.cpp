@@ -33,14 +33,14 @@ static void print_color_code(color_t color, bool is_bold, background_t backgroun
 static const char *background_code(background_t background);
 static const char *color_code(color_t color);
 
-void color_printf(color_t color, bool is_bold, background_t background, const char *string_to_print, ...) {
-    C_ASSERT(string_to_print != NULL, );
+void color_printf(color_t color, bool is_bold, background_t background, const char *format, ...) {
+    C_ASSERT(format != NULL, );
 
     print_color_code(color, is_bold, background);
 
     va_list args;
-    va_start(args, string_to_print);
-    vprintf(string_to_print, args);
+    va_start(args, format);
+    vprintf(format, args);
 
     reset_color();
     va_end(args);
