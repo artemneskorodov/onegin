@@ -41,7 +41,7 @@ int string_compare_rhyme(const void *first, const void *second) {
 
     size_t index_first = first_line->length, index_second = second_line->length;
 
-    for( ; index_first != 0 && index_second != 0; index_first--, index_second--) {
+    for( ; index_first != 0; index_first--, index_second--) {
         while(!isalpha(first_line ->start[index_first ]) && index_first  != 0)
             index_first-- ;
 

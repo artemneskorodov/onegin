@@ -62,12 +62,12 @@ exit_code_t try_parse_text(text_t *text) {
     C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
 
     switch(parse_lines(text)) {
-        case UNKNOWN_PARSING_ERROR: {
+        case UNKNOWN_PARSING_ERROR:    {
             color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                          "Unexpected error while parsing input.\n");
             return EXIT_CODE_FAILURE;
         }
-        case PARSING_SUCCESS: {
+        case PARSING_SUCCESS:          {
             color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
                          "Successfully parsed input.\n");
             return EXIT_CODE_SUCCESS;
@@ -77,7 +77,7 @@ exit_code_t try_parse_text(text_t *text) {
                          "Error while allocating memory to array of pointers.\n");
             return EXIT_CODE_FAILURE;
         }
-        default: {
+        default:                       {
             C_ASSERT(false, EXIT_CODE_FAILURE);
             return EXIT_CODE_FAILURE;
         }
@@ -182,19 +182,23 @@ parsing_input_exit_code_t parse_input(text_t *    text  ,
     C_ASSERT(text != NULL, PARSING_INPUT_ERROR);
     C_ASSERT(argv != NULL, PARSING_INPUT_ERROR);
 
-    if(argc == 1) {
+    if     (argc == 1) {
         text->filename = DEFAULT_READ_FILE_NAME;
         return PARSING_INPUT_SUCCESS;
     }
+
     else if(argc == 2) {
         if(clean_if_needed(argv[1]) == true)
             return PARSING_INPUT_EXIT;
         text->filename = argv[1];
         return PARSING_INPUT_SUCCESS;
     }
-    else if(argc > 2)
+
+    else if(argc > 2) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Unexpected parameter '%s'.\n",
                      argv[2]);
+    }
+
     return PARSING_INPUT_ERROR;
 }

@@ -2,12 +2,12 @@
 #include "custom_assert.h"
 #include "utils.h"
 
-#define CHANGE_VALUES(fisrt, second, changed, element_size, type)                 \
-    while(element_size >= sizeof(type) + changed) {                               \
-        type temp                           = *(type *)((char *)first  + changed);\
-        *(type *)((char *)first  + changed) = *(type *)((char *)second + changed);\
-        *(type *)((char *)second + changed) = temp;                               \
-        changed += sizeof(type);                                                  \
+#define SWAP_VALUES(fisrt, second, swapped, element_size, type)                 \
+    while(element_size >= sizeof(type) + swapped) {                               \
+        type temp                           = *(type *)((char *)first  + swapped);\
+        *(type *)((char *)first  + swapped) = *(type *)((char *)second + swapped);\
+        *(type *)((char *)second + swapped) = temp;                               \
+        swapped += sizeof(type);                                                  \
     }
 
 #define COPY_VALUE(destanation, source, size, copied, type)           \
@@ -19,7 +19,7 @@
 
 static const size_t DEFAULT_PIVOT_STORAGE_SIZE = 256;
 
-static void change(void *first, void *second, size_t element_size);
+static void swap(void *first, void *second, size_t element_size);
 static void make_pivot_copy(char * pivot_storage  ,
                             char * base           ,
                             size_t element_size   ,
@@ -36,19 +36,20 @@ static size_t make_partition(char *             base            ,
                              char *             pivot_storage   );
 static void copy_element(char *destanation, char *source, size_t size);
 
-void change(void *first, void *second, size_t element_size) {
+void swap(void *first, void *second, size_t element_size) {
     C_ASSERT(first  != NULL, );
     C_ASSERT(second != NULL, );
 
-    size_t changed = 0;
-    CHANGE_VALUES(first, second, changed, element_size, long long int);
-    CHANGE_VALUES(first, second, changed, element_size, int          );
-    CHANGE_VALUES(first, second, changed, element_size, short        );
-    CHANGE_VALUES(first, second, changed, element_size, char         );
+    size_t swapped = 0;
+    SWAP_VALUES(first, second, swapped, element_size, long long int);
+    SWAP_VALUES(first, second, swapped, element_size, int          );
+    SWAP_VALUES(first, second, swapped, element_size, short        );
+    SWAP_VALUES(first, second, swapped, element_size, char         );
 }
 
-sorting_state_t sort_array(void *base, size_t element_size,
-                           size_t elements_number,
+sorting_state_t sort_array(void *             base            ,
+                           size_t             element_size    ,
+                           size_t             elements_number ,
                            compare_function_t compare_function) {
     C_ASSERT(base             != NULL, SORTING_ERROR);
     C_ASSERT(compare_function != NULL, SORTING_ERROR);
@@ -61,7 +62,7 @@ sorting_state_t sort_array(void *base, size_t element_size,
             return SORTING_ERROR;
     }
 
-    sorting_state_t sorting_result = quick_sort((char *)base         ,
+    sorting_state_t sorting_state = quick_sort((char *)base          ,
                                                 element_size         ,
                                                 elements_number      ,
                                                 compare_function     ,
@@ -70,7 +71,7 @@ sorting_state_t sort_array(void *base, size_t element_size,
     if(pivot_storage_pointer != static_pivot_storage)
         free(pivot_storage_pointer);
 
-    return sorting_result;
+    return sorting_state;
 }
 
 size_t make_partition(char *             base            ,
@@ -107,9 +108,9 @@ size_t make_partition(char *             base            ,
         if(left_index >= right_index)
             return right_index;
 
-        change(base + element_size * left_index ,
-               base + element_size * right_index,
-               element_size);
+        swap(base + element_size * left_index ,
+             base + element_size * right_index,
+             element_size);
 
         left_index ++;
         right_index--;

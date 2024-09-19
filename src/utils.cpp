@@ -102,7 +102,7 @@ size_t rand_index(size_t size) {
     C_ASSERT(size != 0, 0);
 
     static size_t state = 0;
-    state = 214013 * state + 2531011;
+    state = 5635744375709631613 * state + 233674107310555513;
     return state % size;
 }
 
