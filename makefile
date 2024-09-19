@@ -8,7 +8,7 @@ all: ${EXENAME}
 
 ${EXENAME}:	$(addprefix ${BINDIR}\,${OBJECTS})
 	g++ main.cpp $(addprefix ${BINDIR}\,${OBJECTS}) ${FLAGS} -o ${EXENAME}
-$(addprefix ${BINDIR}\,${OBJECTS}): ${BINDIR}
+$(addprefix ${BINDIR}\,${OBJECTS}): ${BINDIR} $(patsubst %.o,%.cpp,$(addprefix ${SRCDIR}\,$(notdir ${OBJECTS})))
 	g++ -c $(patsubst %.o,%.cpp,$(addprefix ${SRCDIR}\,$(notdir $@))) ${FLAGS} -o $@
 clean:
 	del ${EXENAME}
@@ -17,3 +17,6 @@ ${BINDIR}:
 ifeq ("$(wildcard ${BINDIR})", "")
 	mkdir ${BINDIR}
 endif
+
+$(patsubst %.o,%.cpp,$(addprefix ${SRCDIR}\,$(notdir ${OBJECTS}))):
+

@@ -14,10 +14,15 @@ enum parsing_input_exit_code_t {
     PARSING_INPUT_EXIT   ,
 };
 
+struct line_t {
+    char *start;
+    size_t length;
+};
+
 struct text_t {
     const char *filename    ;
     char *      input_text  ;
-    char **     lines       ;
+    line_t *    lines       ;
     size_t      lines_number;
     size_t      input_length;
 };
@@ -27,7 +32,9 @@ exit_code_t try_parse_text     (text_t *text);
 exit_code_t try_sort_alphabetic(text_t *text);
 exit_code_t try_sort_rhyme     (text_t *text);
 exit_code_t try_print_original (text_t *text);
-parsing_input_exit_code_t parse_input(text_t *text, const int argc, const char *argv[]);
+parsing_input_exit_code_t parse_input(text_t *    text  ,
+                                      const int   argc  ,
+                                      const char *argv[]);
 void free_text(text_t *text);
 
 #endif

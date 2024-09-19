@@ -28,19 +28,19 @@ exit_code_t try_read_file(text_t *text) {
     C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
 
     switch(read_file(text)) {
-        case UNKNOWN_READING_ERROR: {
+        case UNKNOWN_READING_ERROR:    {
             color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
-                         "Unexpected error while reading from file '%s'.\n",
+                         "Unexpected error while reading from '%s'.\n",
                          text->filename);
             return EXIT_CODE_FAILURE;
         }
-        case READING_SUCCESS: {
+        case READING_SUCCESS:          {
             color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
-                         "Successfully read text of Onegin from file '%s'.\n",
+                         "Successfully read text of Onegin from '%s'.\n",
                          text->filename);
             return EXIT_CODE_SUCCESS;
         }
-        case READING_NO_SUCH_FILE: {
+        case READING_NO_SUCH_FILE:     {
             color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                          "There is no file '%s'.\n",
                          text->filename);
@@ -51,7 +51,7 @@ exit_code_t try_read_file(text_t *text) {
                          "Error while allocation memory to input buffer.\n");
             return EXIT_CODE_FAILURE;
         }
-        default: {
+        default:                       {
             C_ASSERT(false, EXIT_CODE_FAILURE);
             return EXIT_CODE_FAILURE;
         }
@@ -87,7 +87,9 @@ exit_code_t try_parse_text(text_t *text) {
 exit_code_t try_sort_alphabetic(text_t *text) {
     C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
 
-    if(sort_array(text->lines, sizeof(char *), text->lines_number,
+    if(sort_array(text->lines              ,
+                  sizeof(line_t)           ,
+                  text->lines_number       ,
                   string_compare_alphabetic) != SORTING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while sorting alphabetic.\n");
@@ -96,7 +98,8 @@ exit_code_t try_sort_alphabetic(text_t *text) {
 
     if(write_file(ALPHABETIC_OUTPUT, text) != WRITING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
-                     "Error while writing result of alphabetical sorting in file.\n");
+                     "Error while writing result of "
+                     "alphabetical sorting in file.\n");
         return EXIT_CODE_FAILURE;
     }
 
@@ -108,7 +111,9 @@ exit_code_t try_sort_alphabetic(text_t *text) {
 exit_code_t try_sort_rhyme(text_t *text) {
     C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
 
-    if(sort_array(text->lines, sizeof(char *), text->lines_number,
+    if(sort_array(text->lines         ,
+                  sizeof(line_t)      ,
+                  text->lines_number  ,
                   string_compare_rhyme) != SORTING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while sorting from end.\n");
@@ -117,7 +122,8 @@ exit_code_t try_sort_rhyme(text_t *text) {
 
     if(write_file(RHYME_OUTPUT, text) != WRITING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
-                     "Error while writing result of sorting from end in file.\n");
+                     "Error while writing result of "
+                     "sorting from end in file.\n");
         return EXIT_CODE_FAILURE;
     }
 
@@ -137,7 +143,10 @@ exit_code_t try_print_original(text_t *text) {
         return EXIT_CODE_SUCCESS;
     }
 
-    if(fwrite(text->input_text, 1, text->input_length, output) != text->input_length) {
+    if(fwrite(text->input_text  ,
+              sizeof(char)      ,
+              text->input_length,
+              output            ) != text->input_length) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while writing original text to file '%s'.\n",
                      ORIGINAL_OUTPUT);
@@ -167,7 +176,9 @@ bool clean_if_needed(const char *param) {
     return true;
 }
 
-parsing_input_exit_code_t parse_input(text_t *text, const int argc, const char *argv[]) {
+parsing_input_exit_code_t parse_input(text_t *    text  ,
+                                      const int   argc  ,
+                                      const char *argv[]) {
     C_ASSERT(text != NULL, PARSING_INPUT_ERROR);
     C_ASSERT(argv != NULL, PARSING_INPUT_ERROR);
 

@@ -29,7 +29,8 @@ static const char *bold = "1";
 static const char *color_code_start = "\033[";
 
 static void reset_color(void);
-static void print_color_code(color_t color, bool is_bold, background_t background);
+static void print_color_code(color_t color, bool is_bold,
+                             background_t background);
 static const char *background_code(background_t background);
 static const char *color_code(color_t color);
 
@@ -46,7 +47,8 @@ void color_printf(color_t color, bool is_bold, background_t background, const ch
     va_end(args);
 }
 
-void print_color_code(color_t color, bool is_bold, background_t background) {
+void print_color_code(color_t color, bool is_bold,
+                      background_t background) {
     printf("%s", color_code_start);
     if(is_bold == true) {
         printf("%s", bold);

@@ -2,8 +2,13 @@
 #include "utils.h"
 #include "custom_assert.h"
 
+enum writing_line_result_t {
+    WRITING_LINE_SUCCESS,
+    WRITING_LINE_ERROR  ,
+};
+
 static size_t file_size(FILE *file);
-static int file_put_line(FILE *file, char *string);
+static writing_line_result_t file_put_line(FILE *file, line_t *line);
 static void add_line_end(char *text);
 
 reading_state_t read_file(text_t *text) {
@@ -26,7 +31,8 @@ reading_state_t read_file(text_t *text) {
         return READING_ALLOCATION_ERROR;
     }
 
-    if(fread(text->input_text, 1, text->input_length, input) != text->input_length) {
+    if(fread(text->input_text, 1, text->input_length, input) !=
+       text->input_length) {
         fclose(input);
         free(text->input_text);
         return UNKNOWN_READING_ERROR;
@@ -52,20 +58,22 @@ parsing_state_t parse_lines(text_t *text) {
     C_ASSERT(text->input_text != NULL, UNKNOWN_PARSING_ERROR);
     C_ASSERT(text->lines      == NULL, UNKNOWN_PARSING_ERROR);
 
-    for(const char *buffer_pointer = text->input_text; *buffer_pointer != '\0'; buffer_pointer++)
+    for(char *buffer_pointer = text->input_text; *buffer_pointer != '\0'; buffer_pointer++)
         if(*buffer_pointer == '\n')
             text->lines_number++;
 
-    text->lines = (char **)calloc(text->lines_number + 1, sizeof(char *));
+    text->lines = (line_t *)calloc(text->lines_number, sizeof(line_t));
     if(text->lines == NULL)
         return PARSING_ALLOCATION_ERROR;
 
-    text->lines[0] = text->input_text;
-    size_t line = 1;
+    text->lines[0].start = text->input_text;
+    size_t line = 0;
     for(char *buffer_pointer = text->input_text; *buffer_pointer != '\0'; buffer_pointer++) {
+        if(!is_line_end(*buffer_pointer))
+            text->lines[line].length++;
         if(*buffer_pointer == '\n') {
             C_ASSERT(line < text->lines_number + 1, UNKNOWN_PARSING_ERROR);
-            text->lines[line++] = buffer_pointer + 1;
+            text->lines[++line].start = buffer_pointer + 1;
         }
     }
     return PARSING_SUCCESS;
@@ -81,7 +89,7 @@ writing_state_t write_file(const char *filename, text_t *text) {
         return WRITING_OPEN_FILE_ERROR;
 
     for(size_t line = 0; line < text->lines_number; line++) {
-        if(file_put_line(output, text->lines[line]) == EOF) {
+        if(file_put_line(output, text->lines + line) != WRITING_LINE_SUCCESS) {
             fclose(output);
             return WRITING_APPENDING_ERROR;
         }
@@ -98,27 +106,18 @@ size_t rand_index(size_t size) {
     return state % size;
 }
 
-int file_put_line(FILE *file, char *string) {
-    C_ASSERT(file   != NULL, EOF);
-    C_ASSERT(string != NULL, EOF);
+writing_line_result_t file_put_line(FILE *file, line_t *line) {
+    C_ASSERT(file        != NULL, WRITING_LINE_ERROR);
+    C_ASSERT(line        != NULL, WRITING_LINE_ERROR);
+    C_ASSERT(line->start != NULL, WRITING_LINE_ERROR);
 
-    char last_symbol = 0;
-
-    char *buffer_pointer = string;
-    while(!is_line_end(*buffer_pointer)) {
-        buffer_pointer++;
-        last_symbol = *buffer_pointer;
-    }
-    *buffer_pointer = '\0';
-    int fputs_result = fputs(string, file);
-    if(fputs_result == EOF)
-        return EOF;
+    if(fwrite(line->start, 1, line->length, file) != line->length)
+        return WRITING_LINE_ERROR;
 
     if(fputc('\n', file) == EOF)
-        return EOF;
+        return WRITING_LINE_ERROR;
 
-    *buffer_pointer = last_symbol;
-    return fputs_result;
+    return WRITING_LINE_SUCCESS;
 }
 
 bool is_line_end(char symbol) {

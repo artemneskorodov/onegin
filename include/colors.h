@@ -24,6 +24,9 @@ enum background_t {
     DEFAULT_BACKGROUND,
 };
 
-void color_printf(color_t color, bool is_bold, background_t background, const char *format, ...);
+void color_printf(color_t      color      ,
+                  bool         is_bold    ,
+                  background_t background ,
+                  const char * format, ...);
 
 #endif

@@ -9,51 +9,53 @@ int string_compare_alphabetic(const void *first, const void *second) {
     C_ASSERT(first  != NULL, 0);
     C_ASSERT(second != NULL, 0);
 
-    const char *first_string  = *(const char *const *)first ;
-    const char *second_string = *(const char *const *)second;
+    const line_t *first_line  = (const line_t *)first ;
+    const line_t *second_line = (const line_t *)second;
 
-    for( ; !is_line_end(*first_string); first_string++, second_string++) {
-        while(!isalpha(*first_string ) && !is_line_end(*first_string ))
-            first_string++ ;
+    size_t index_first = 0, index_second = 0;
 
-        while(!isalpha(*second_string) && !is_line_end(*second_string))
-            second_string++;
+    for( ; index_first < first_line->length; index_first++, index_second++) {
+        while(!isalpha(first_line ->start[index_first ]) &&
+              index_first  < first_line ->length)
+            index_first++ ;
 
-        int difference = toupper(*first_string) - toupper(*second_string);
+        while(!isalpha(second_line->start[index_second]) &&
+              index_second < second_line->length)
+            index_second++;
+
+        int difference = toupper(first_line ->start[index_first ]) -
+                         toupper(second_line->start[index_second]) ;
         if(difference != 0)
             return difference;
     }
-    return toupper(*first_string) - toupper(*second_string);
+    return toupper(first_line ->start[index_first ]) -
+           toupper(second_line->start[index_second]) ;
 }
 
 int string_compare_rhyme(const void *first, const void *second) {
     C_ASSERT(first  != NULL, 0);
     C_ASSERT(second != NULL, 0);
 
-    const char *first_string  = *(const char *const *)first ;
-    const char *second_string = *(const char *const *)second;
+    const line_t *first_line  = (const line_t *)first ;
+    const line_t *second_line = (const line_t *)second;
 
-    const char *pointer_first = first_string, *pointer_second = second_string;
+    size_t index_first = first_line->length, index_second = second_line->length;
 
-    while(!is_line_end(*pointer_first))
-        pointer_first++;
+    for( ; index_first != 0 && index_second != 0; index_first--, index_second--) {
+        while(!isalpha(first_line ->start[index_first ]) && index_first  != 0)
+            index_first-- ;
 
-    while(!is_line_end(*pointer_second))
-        pointer_second++;
+        while(!isalpha(second_line->start[index_second]) && index_second != 0)
+            index_second--;
 
-    for( ; pointer_first != first_string; pointer_first--, pointer_second--) {
-        while(!isalpha(*pointer_first) && pointer_first != first_string)
-            pointer_first--;
-
-        while(!isalpha(*pointer_second) && pointer_second != second_string)
-            pointer_second--;
-
-        if(pointer_second == second_string)
+        if(index_second == 0 || index_first == 0)
             break;
 
-        int difference = toupper(*pointer_first) - toupper(*pointer_second);
+        int difference = toupper(first_line ->start[index_first ]) -
+                         toupper(second_line->start[index_second]) ;
         if(difference != 0)
             return difference;
     }
-    return toupper(*pointer_first) - toupper(*pointer_second);
+    return toupper(first_line ->start[index_first ]) -
+           toupper(second_line->start[index_second]) ;
 }
