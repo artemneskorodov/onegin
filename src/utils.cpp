@@ -2,15 +2,24 @@
 #include "utils.h"
 #include "custom_assert.h"
 
+//=================================================================================================
+//                        ENUMS
+//=================================================================================================
 enum writing_line_result_t {
     WRITING_LINE_SUCCESS,
     WRITING_LINE_ERROR  ,
 };
 
+//=================================================================================================
+//                        FUNCTIONS PROTOTYPES
+//=================================================================================================
 static size_t file_size(FILE *file);
 static writing_line_result_t file_put_line(FILE *file, line_t *line);
 static exit_code_t add_line_end(char *text);
 
+//=================================================================================================
+//                        FUNCTIONS DEFINITION
+//=================================================================================================
 reading_state_t read_file(text_t *text) {
     C_ASSERT(text             != NULL, return UNKNOWN_READING_ERROR);
     C_ASSERT(text->filename   != NULL, return UNKNOWN_READING_ERROR);

@@ -24,8 +24,13 @@ enum background_t {
     DEFAULT_BACKGROUND,
 };
 
+enum boldness_t {
+    BOLD_TEXT  ,
+    NORMAL_TEXT,
+};
+
 int color_printf(color_t      color,
-                 bool         is_bold,
+                 boldness_t   is_bold,
                  background_t background,
                  const char * format, ...);
 

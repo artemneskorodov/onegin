@@ -8,46 +8,46 @@
 #include "strings_compare.h"
 #include "utils.h"
 
+//=================================================================================================
+//                        CONSTANTS
+//=================================================================================================
 static const char *DEFAULT_READ_FILE_NAME = "Onegin.txt"          ;
 static const char *ORIGINAL_OUTPUT        = "OneginOriginal.txt"  ;
 static const char *ALPHABETIC_OUTPUT      = "OneginAlphabetic.txt";
 static const char *RHYME_OUTPUT           = "OneginRhyme.txt"     ;
 
+//=================================================================================================
+//                        FUNCTIONS PROTOTYPES
+//=================================================================================================
 static bool clean_if_needed(const char *param);
 
-void free_text(text_t *text) {
-    C_ASSERT(text != NULL, return );
-
-    free(text->input_text );
-    free(text->lines      );
-    text->input_text = NULL;
-    text->lines      = NULL;
-}
-
+//=================================================================================================
+//                        FUNCTIONS DEFINITION
+//=================================================================================================
 exit_code_t try_read_file(text_t *text) {
     C_ASSERT(text != NULL, return EXIT_CODE_FAILURE);
 
     switch(read_file(text)) {
         case UNKNOWN_READING_ERROR:    {
-            color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+            color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                          "Unexpected error while reading from '%s'.\n",
                          text->filename);
             return EXIT_CODE_FAILURE;
         }
         case READING_SUCCESS:          {
-            color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
+            color_printf(GREEN_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                          "Successfully read text of Onegin from '%s'.\n",
                          text->filename);
             return EXIT_CODE_SUCCESS;
         }
         case READING_NO_SUCH_FILE:     {
-            color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+            color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                          "There is no file '%s'.\n",
                          text->filename);
             return EXIT_CODE_FAILURE;
         }
         case READING_ALLOCATION_ERROR: {
-            color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+            color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                          "Error while allocation memory to input buffer.\n");
             return EXIT_CODE_FAILURE;
         }
@@ -63,17 +63,17 @@ exit_code_t try_parse_text(text_t *text) {
 
     switch(parse_lines(text)) {
         case UNKNOWN_PARSING_ERROR:    {
-            color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+            color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                          "Unexpected error while parsing input.\n");
             return EXIT_CODE_FAILURE;
         }
         case PARSING_SUCCESS:          {
-            color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
+            color_printf(GREEN_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                          "Successfully parsed input.\n");
             return EXIT_CODE_SUCCESS;
         }
         case PARSING_ALLOCATION_ERROR: {
-            color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+            color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                          "Error while allocating memory to array of pointers.\n");
             return EXIT_CODE_FAILURE;
         }
@@ -91,19 +91,19 @@ exit_code_t try_sort_alphabetic(text_t *text) {
                   sizeof(line_t),
                   text->lines_number,
                   string_compare_alphabetic) != SORTING_SUCCESS) {
-        color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Error while sorting alphabetic.\n");
         return EXIT_CODE_FAILURE;
     }
 
     if(write_file(ALPHABETIC_OUTPUT, text) != WRITING_SUCCESS) {
-        color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Error while writing result of "
                      "alphabetical sorting in file.\n");
         return EXIT_CODE_FAILURE;
     }
 
-    color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
+    color_printf(GREEN_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                  "Successfully sorted alphabetically.\n");
     return EXIT_CODE_SUCCESS;
 }
@@ -115,19 +115,19 @@ exit_code_t try_sort_rhyme(text_t *text) {
                   sizeof(line_t),
                   text->lines_number,
                   string_compare_rhyme) != SORTING_SUCCESS) {
-        color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Error while sorting from end.\n");
         return EXIT_CODE_FAILURE;
     }
 
     if(write_file(RHYME_OUTPUT, text) != WRITING_SUCCESS) {
-        color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Error while writing result of "
                      "sorting from end in file.\n");
         return EXIT_CODE_FAILURE;
     }
 
-    color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
+    color_printf(GREEN_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                  "Successfully sorted from end.\n");
     return EXIT_CODE_SUCCESS;
 }
@@ -137,8 +137,8 @@ exit_code_t try_print_original(text_t *text) {
 
     FILE *output = fopen(ORIGINAL_OUTPUT, "wb");
     if(output == NULL) {
-        color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
-                     "Error while oppening file '%s'.\n",
+        color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
+                     "Error while opening file '%s'.\n",
                      ORIGINAL_OUTPUT);
         return EXIT_CODE_SUCCESS;
     }
@@ -147,13 +147,13 @@ exit_code_t try_print_original(text_t *text) {
               sizeof(char),
               text->input_length,
               output            ) != text->input_length) {
-        color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Error while writing original text to file '%s'.\n",
                      ORIGINAL_OUTPUT);
         return EXIT_CODE_SUCCESS;
     }
 
-    color_printf(GREEN_TEXT, true, DEFAULT_BACKGROUND,
+    color_printf(GREEN_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                  "Successfully written original text to file '%s'.\n",
                  ORIGINAL_OUTPUT);
     return EXIT_CODE_SUCCESS;
@@ -165,13 +165,13 @@ bool clean_if_needed(const char *param) {
     if(strcmp(param, "--clean") != 0)
         return false;
     if(remove(ALPHABETIC_OUTPUT) == 0)
-        color_printf(YELLOW_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(YELLOW_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Deleted '%s'.\n", ALPHABETIC_OUTPUT);
     if(remove(RHYME_OUTPUT     ) == 0)
-        color_printf(YELLOW_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(YELLOW_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Deleted '%s'.\n", RHYME_OUTPUT     );
     if(remove(ORIGINAL_OUTPUT  ) == 0)
-        color_printf(YELLOW_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(YELLOW_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Deleted '%s'.\n", ORIGINAL_OUTPUT  );
     return true;
 }
@@ -195,10 +195,19 @@ parsing_input_exit_code_t parse_input(text_t *    text  ,
     }
 
     else if(argc > 2) {
-        color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
+        color_printf(RED_TEXT, BOLD_TEXT, DEFAULT_BACKGROUND,
                      "Unexpected parameter '%s'.\n",
                      argv[2]);
     }
 
     return PARSING_INPUT_ERROR;
+}
+
+void free_text(text_t *text) {
+    C_ASSERT(text != NULL, return );
+
+    free(text->input_text );
+    free(text->lines      );
+    text->input_text = NULL;
+    text->lines      = NULL;
 }

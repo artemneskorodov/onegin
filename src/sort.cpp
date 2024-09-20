@@ -2,6 +2,9 @@
 #include "custom_assert.h"
 #include "utils.h"
 
+//=================================================================================================
+//                        MACROS
+//=================================================================================================
 #define SWAP_VALUES(first, second, swapped, element_size, type)                   \
     while(element_size >= sizeof(type) + swapped) {                               \
         type temp                           = *(type *)((char *)first  + swapped);\
@@ -16,9 +19,14 @@
         copied += sizeof(type);                                      \
     }
 
-
+//=================================================================================================
+//                        CONSTANTS
+//=================================================================================================
 static const size_t DEFAULT_PIVOT_STORAGE_SIZE = 256;
 
+//=================================================================================================
+//                        FUNCTIONS PROTOTYPES
+//=================================================================================================
 static exit_code_t swap(void *first, void *second, size_t element_size);
 static exit_code_t make_pivot_copy(char * pivot_storage,
                                    char * base,
@@ -36,18 +44,9 @@ static size_t make_partition(char *             base,
                              char *             pivot_storage   );
 static exit_code_t copy_element(char *destination, char *source, size_t size);
 
-exit_code_t swap(void *first, void *second, size_t element_size) {
-    C_ASSERT(first  != NULL, return EXIT_CODE_FAILURE);
-    C_ASSERT(second != NULL, return EXIT_CODE_FAILURE);
-
-    size_t swapped = 0;
-    SWAP_VALUES(first, second, swapped, element_size, long long int);
-    SWAP_VALUES(first, second, swapped, element_size, int          );
-    SWAP_VALUES(first, second, swapped, element_size, short        );
-    SWAP_VALUES(first, second, swapped, element_size, char         );
-    return EXIT_CODE_SUCCESS;
-}
-
+//=================================================================================================
+//                        FUNCTIONS DEFINITION
+//=================================================================================================
 sorting_state_t sort_array(void *             base,
                            size_t             element_size,
                            size_t             elements_number,
@@ -176,5 +175,17 @@ exit_code_t copy_element(char *destination, char *source, size_t size) {
     COPY_VALUE(destination, source, size, copied, int          );
     COPY_VALUE(destination, source, size, copied, short        );
     COPY_VALUE(destination, source, size, copied, char         );
+    return EXIT_CODE_SUCCESS;
+}
+
+exit_code_t swap(void *first, void *second, size_t element_size) {
+    C_ASSERT(first  != NULL, return EXIT_CODE_FAILURE);
+    C_ASSERT(second != NULL, return EXIT_CODE_FAILURE);
+
+    size_t swapped = 0;
+    SWAP_VALUES(first, second, swapped, element_size, long long int);
+    SWAP_VALUES(first, second, swapped, element_size, int          );
+    SWAP_VALUES(first, second, swapped, element_size, short        );
+    SWAP_VALUES(first, second, swapped, element_size, char         );
     return EXIT_CODE_SUCCESS;
 }

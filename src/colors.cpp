@@ -34,13 +34,16 @@ static const char *bold = "1";
 static const char *color_code_start = "\033[";
 
 static printing_state_t reset_color(void);
-static printing_state_t print_color_code(color_t color,
-                                         bool is_bold,
+static printing_state_t print_color_code(color_t      color,
+                                         boldness_t   is_bold,
                                          background_t background);
 static const char *background_code(background_t background);
 static const char *color_code(color_t color);
 
-int color_printf(color_t color, bool is_bold, background_t background, const char *format, ...) {
+int color_printf(color_t      color,
+                 boldness_t   is_bold,
+                 background_t background,
+                 const char * format, ...) {
     C_ASSERT(format != NULL, return -1);
 
     print_color_code(color, is_bold, background);
@@ -54,11 +57,11 @@ int color_printf(color_t color, bool is_bold, background_t background, const cha
     return printed_symbols;
 }
 
-printing_state_t print_color_code(color_t color,
-                                  bool is_bold,
+printing_state_t print_color_code(color_t      color,
+                                  boldness_t   is_bold,
                                   background_t background) {
     printf("%s", color_code_start);
-    if(is_bold == true) {
+    if(is_bold == BOLD_TEXT) {
         printf("%s", bold);
         if(color != DEFAULT_TEXT || background != DEFAULT_BACKGROUND)
             putchar(';');

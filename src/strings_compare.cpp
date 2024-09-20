@@ -5,6 +5,9 @@
 #include "custom_assert.h"
 #include "utils.h"
 
+//=================================================================================================
+//                        FUNCTIONS DEFINITION
+//=================================================================================================
 int string_compare_alphabetic(const void *first, const void *second) {
     C_ASSERT(first  != NULL, return 0);
     C_ASSERT(second != NULL, return 0);
