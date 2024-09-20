@@ -3,6 +3,11 @@
 #include "colors.h"
 #include "custom_assert.h"
 
+enum printing_state_t {
+    PRINTING_SUCCESS,
+    PRINTING_FAILURE
+};
+
 //text colors
 static const char *red_text     = "31";
 static const char *green_text   = "32";
@@ -28,27 +33,30 @@ static const char *bold = "1";
 //start of color code
 static const char *color_code_start = "\033[";
 
-static void reset_color(void);
-static void print_color_code(color_t color, bool is_bold,
-                             background_t background);
+static printing_state_t reset_color(void);
+static printing_state_t print_color_code(color_t color,
+                                         bool is_bold,
+                                         background_t background);
 static const char *background_code(background_t background);
 static const char *color_code(color_t color);
 
-void color_printf(color_t color, bool is_bold, background_t background, const char *format, ...) {
-    C_ASSERT(format != NULL, );
+int color_printf(color_t color, bool is_bold, background_t background, const char *format, ...) {
+    C_ASSERT(format != NULL, return -1);
 
     print_color_code(color, is_bold, background);
 
     va_list args;
     va_start(args, format);
-    vprintf(format, args);
+    int printed_symbols = vprintf(format, args);
 
     reset_color();
     va_end(args);
+    return printed_symbols;
 }
 
-void print_color_code(color_t color, bool is_bold,
-                      background_t background) {
+printing_state_t print_color_code(color_t color,
+                                  bool is_bold,
+                                  background_t background) {
     printf("%s", color_code_start);
     if(is_bold == true) {
         printf("%s", bold);
@@ -57,7 +65,7 @@ void print_color_code(color_t color, bool is_bold,
 
         else {
             putchar('m');
-            return ;
+            return PRINTING_SUCCESS;
         }
     }
     if(color != DEFAULT_TEXT) {
@@ -68,20 +76,22 @@ void print_color_code(color_t color, bool is_bold,
             putchar(';');
         else {
             putchar('m');
-            return ;
+            return PRINTING_SUCCESS;
         }
     }
     if(background != DEFAULT_BACKGROUND) {
         const char *code = background_code(background);
         C_ASSERT(code != NULL, );
         printf("%sm", code);
-        return ;
+        return PRINTING_SUCCESS;
     }
-    reset_color();
+    return reset_color();
 }
 
-void reset_color(void){
-    printf("%s0m", color_code_start);
+printing_state_t reset_color(void){
+    if(printf("%s0m", color_code_start) <= 0)
+        return PRINTING_FAILURE;
+    return PRINTING_SUCCESS;
 }
 
 const char *color_code(color_t color) {

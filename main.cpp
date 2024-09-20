@@ -34,7 +34,7 @@ int main(const int argc, const char *argv[]) {
 }
 
 exit_code_t run_program(text_t *text) {
-    C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
+    C_ASSERT(text != NULL, return EXIT_CODE_FAILURE);
     for(size_t trier = 0; trier < sizeof(triers) / sizeof(triers[0]); trier++)
         if(triers[trier](text) != EXIT_CODE_SUCCESS) {
             free_text(text);

@@ -32,8 +32,8 @@ exit_code_t try_parse_text     (text_t *text);
 exit_code_t try_sort_alphabetic(text_t *text);
 exit_code_t try_sort_rhyme     (text_t *text);
 exit_code_t try_print_original (text_t *text);
-parsing_input_exit_code_t parse_input(text_t *    text  ,
-                                      const int   argc  ,
+parsing_input_exit_code_t parse_input(text_t *    text,
+                                      const int   argc,
                                       const char *argv[]);
 void free_text(text_t *text);
 

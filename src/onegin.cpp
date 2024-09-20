@@ -16,7 +16,7 @@ static const char *RHYME_OUTPUT           = "OneginRhyme.txt"     ;
 static bool clean_if_needed(const char *param);
 
 void free_text(text_t *text) {
-    C_ASSERT(text != NULL, );
+    C_ASSERT(text != NULL, return );
 
     free(text->input_text );
     free(text->lines      );
@@ -25,7 +25,7 @@ void free_text(text_t *text) {
 }
 
 exit_code_t try_read_file(text_t *text) {
-    C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
+    C_ASSERT(text != NULL, return EXIT_CODE_FAILURE);
 
     switch(read_file(text)) {
         case UNKNOWN_READING_ERROR:    {
@@ -52,14 +52,14 @@ exit_code_t try_read_file(text_t *text) {
             return EXIT_CODE_FAILURE;
         }
         default:                       {
-            C_ASSERT(false, EXIT_CODE_FAILURE);
+            C_ASSERT(false, return EXIT_CODE_FAILURE);
             return EXIT_CODE_FAILURE;
         }
     }
 }
 
 exit_code_t try_parse_text(text_t *text) {
-    C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
+    C_ASSERT(text != NULL, return EXIT_CODE_FAILURE);
 
     switch(parse_lines(text)) {
         case UNKNOWN_PARSING_ERROR:    {
@@ -78,18 +78,18 @@ exit_code_t try_parse_text(text_t *text) {
             return EXIT_CODE_FAILURE;
         }
         default:                       {
-            C_ASSERT(false, EXIT_CODE_FAILURE);
+            C_ASSERT(false, return EXIT_CODE_FAILURE);
             return EXIT_CODE_FAILURE;
         }
     }
 }
 
 exit_code_t try_sort_alphabetic(text_t *text) {
-    C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
+    C_ASSERT(text != NULL, return EXIT_CODE_FAILURE);
 
-    if(sort_array(text->lines              ,
-                  sizeof(line_t)           ,
-                  text->lines_number       ,
+    if(sort_array(text->lines,
+                  sizeof(line_t),
+                  text->lines_number,
                   string_compare_alphabetic) != SORTING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while sorting alphabetic.\n");
@@ -109,11 +109,11 @@ exit_code_t try_sort_alphabetic(text_t *text) {
 }
 
 exit_code_t try_sort_rhyme(text_t *text) {
-    C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
+    C_ASSERT(text != NULL, return EXIT_CODE_FAILURE);
 
-    if(sort_array(text->lines         ,
-                  sizeof(line_t)      ,
-                  text->lines_number  ,
+    if(sort_array(text->lines,
+                  sizeof(line_t),
+                  text->lines_number,
                   string_compare_rhyme) != SORTING_SUCCESS) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
                      "Error while sorting from end.\n");
@@ -133,7 +133,7 @@ exit_code_t try_sort_rhyme(text_t *text) {
 }
 
 exit_code_t try_print_original(text_t *text) {
-    C_ASSERT(text != NULL, EXIT_CODE_FAILURE);
+    C_ASSERT(text != NULL, return EXIT_CODE_FAILURE);
 
     FILE *output = fopen(ORIGINAL_OUTPUT, "wb");
     if(output == NULL) {
@@ -143,8 +143,8 @@ exit_code_t try_print_original(text_t *text) {
         return EXIT_CODE_SUCCESS;
     }
 
-    if(fwrite(text->input_text  ,
-              sizeof(char)      ,
+    if(fwrite(text->input_text,
+              sizeof(char),
               text->input_length,
               output            ) != text->input_length) {
         color_printf(RED_TEXT, true, DEFAULT_BACKGROUND,
@@ -160,7 +160,7 @@ exit_code_t try_print_original(text_t *text) {
 }
 
 bool clean_if_needed(const char *param) {
-    C_ASSERT(param != NULL, false);
+    C_ASSERT(param != NULL, return false);
 
     if(strcmp(param, "--clean") != 0)
         return false;
@@ -179,8 +179,8 @@ bool clean_if_needed(const char *param) {
 parsing_input_exit_code_t parse_input(text_t *    text  ,
                                       const int   argc  ,
                                       const char *argv[]) {
-    C_ASSERT(text != NULL, PARSING_INPUT_ERROR);
-    C_ASSERT(argv != NULL, PARSING_INPUT_ERROR);
+    C_ASSERT(text != NULL, return PARSING_INPUT_ERROR);
+    C_ASSERT(argv != NULL, return PARSING_INPUT_ERROR);
 
     if     (argc == 1) {
         text->filename = DEFAULT_READ_FILE_NAME;

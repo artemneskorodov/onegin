@@ -6,8 +6,8 @@
 #include "utils.h"
 
 int string_compare_alphabetic(const void *first, const void *second) {
-    C_ASSERT(first  != NULL, 0);
-    C_ASSERT(second != NULL, 0);
+    C_ASSERT(first  != NULL, return 0);
+    C_ASSERT(second != NULL, return 0);
 
     const line_t *first_line  = (const line_t *)first ;
     const line_t *second_line = (const line_t *)second;
@@ -33,8 +33,8 @@ int string_compare_alphabetic(const void *first, const void *second) {
 }
 
 int string_compare_rhyme(const void *first, const void *second) {
-    C_ASSERT(first  != NULL, 0);
-    C_ASSERT(second != NULL, 0);
+    C_ASSERT(first  != NULL, return 0);
+    C_ASSERT(second != NULL, return 0);
 
     const line_t *first_line  = (const line_t *)first ;
     const line_t *second_line = (const line_t *)second;
